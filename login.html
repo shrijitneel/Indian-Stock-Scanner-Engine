@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Indian Stock Scanner Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-[#0b0f17] text-slate-200 min-h-screen flex items-center justify-center p-4 font-sans selection:bg-emerald-500 selection:text-black">
+
+  <div class="w-full max-w-md bg-[#121827] border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
+    <!-- Brand Header -->
+    <div class="text-center space-y-2">
+      <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto text-xl">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+      </div>
+      <h1 class="text-xl font-bold text-white tracking-wide">TradePulse Pro</h1>
+      <p class="text-xs text-slate-400">Sign in to access your institutional screener</p>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4 text-xs">
+      <div>
+        <label class="block text-slate-400 mb-1.5 font-medium">Email Address</label>
+        <div class="relative">
+          <i class="fa-regular fa-envelope absolute left-3.5 top-3 text-slate-500"></i>
+          <input type="email" id="email" required placeholder="name@example.com"
+            class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-slate-400 mb-1.5 font-medium">Access Passcode</label>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500"></i>
+          <input type="password" id="password" required placeholder="••••••••"
+            class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition" />
+        </div>
+      </div>
+
+      <div id="errorMsg" class="text-rose-400 text-xs hidden"></div>
+
+      <button type="submit"
+        class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-semibold shadow-lg shadow-emerald-900/30 transition flex items-center justify-center gap-2">
+        <span>Authenticate & Enter</span>
+        <i class="fa-solid fa-arrow-right text-xs"></i>
+      </button>
+    </form>
+
+    <div class="pt-4 border-t border-slate-800/80 text-center text-[11px] text-slate-500">
+      Protected Terminal • Authorized Personnel Only
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('password').value;
+      const errorDiv = document.getElementById('errorMsg');
+
+      // ড্যাশবোর্ডের অ্যাডমিন পাসকোডের সাথে মিল রাখা হয়েছে
+      if (pass === 'shrijitneel1909') {
+        localStorage.setItem('tradePulse_auth', 'true');
+        window.location.href = 'index.html'; // ভেরিফাই হলে মূল পেজে নিয়ে যাবে
+      } else {
+        errorDiv.innerText = 'ভুল পাসকোড! দয়া করে সঠিক পাসকোড দিন।';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>

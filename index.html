@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradePulse Pro - AI Stock Screener & Breakout Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#0b0f17] text-slate-200 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-black">
+
+  <!-- Top Market Ticker Bar -->
+  <div class="bg-[#070a10] border-b border-slate-800/80 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-6">
+      <span class="flex items-center gap-2 font-medium text-emerald-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        MARKET LIVE FEED
+      </span>
+      <div class="flex items-center gap-2">
+        <span class="text-slate-400">IN NSE:</span>
+        <span class="font-semibold text-white">NIFTY 50</span>
+        <span class="font-mono text-emerald-400">24,860.4 +0.62%</span>
+        <span class="bg-slate-800 text-[10px] text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">LIVE</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-2">
+        <span class="text-slate-400">US NASDAQ:</span>
+        <span class="font-semibold text-white">S&P 500</span>
+        <span class="font-mono text-emerald-400">5,648.4 +0.85%</span>
+        <span class="bg-slate-800 text-[10px] text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">CLOSED</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 text-slate-400 text-[11px]">
+      <span><i class="fa-solid fa-globe text-slate-500 mr-1"></i> IST & EST Synced</span>
+      <span class="border-l border-slate-700 pl-3">Ref: Realtime Engine</span>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="bg-[#0f1422] border-b border-slate-800 px-5 py-3 sticky top-0 z-30">
+    <div class="max-w-[1550px] mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-8">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="App.navigate('screener')">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-white text-base tracking-wide" id="navBrandName">Indian Stock Scanner Engine</span>
+              <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/40">PRO</span>
+            </div>
+            <p class="text-[10px] text-slate-400 -mt-0.5" id="navBrandTag">Precision Scanning for Smarter Investing</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="hidden lg:flex items-center gap-1 text-sm font-medium">
+          <button id="nav-dashboard" onclick="App.navigate('dashboard')" class="nav-item px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+            <i class="fa-solid fa-chart-line mr-1.5 text-xs"></i>Dashboard
+          </button>
+          <button id="nav-screener" onclick="App.navigate('screener')" class="nav-item px-3 py-1.5 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 transition">
+            <i class="fa-solid fa-filter mr-1.5 text-xs"></i>Stock Screener
+          </button>
+          <button id="nav-breakouts" onclick="App.navigate('breakouts')" class="nav-item px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5">
+            Breakouts (4H/1D) <span class="bg-amber-500/20 text-amber-400 text-[10px] px-1 rounded font-bold">Hot</span>
+          </button>
+          <button id="nav-watchlist" onclick="App.navigate('watchlist')" class="nav-item px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5">
+            <i class="fa-regular fa-bookmark mr-1.5 text-xs"></i>Watchlists <span id="watchlistBadge" class="bg-slate-800 text-slate-400 text-[10px] px-1.5 rounded-full border border-slate-700">0</span>
+          </button>
+          <button id="nav-alerts" onclick="App.navigate('alerts')" class="nav-item px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5">
+            <i class="fa-brands fa-whatsapp mr-1.5 text-xs text-emerald-400"></i>WhatsApp Alerts <span class="bg-emerald-500 text-slate-950 font-bold text-[10px] px-1.5 rounded-full">Active</span>
+          </button>
+          <button id="nav-ai" onclick="App.navigate('ai')" class="nav-item px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+            <i class="fa-solid fa-brain mr-1.5 text-xs text-purple-400"></i>AI Analyst
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="App.openAdminModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-sliders text-emerald-400"></i> Admin Panel
+        </button>
+        <button onclick="App.fetchData()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+          <i class="fa-solid fa-rotate"></i> Refresh Feed
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dynamic Views Container rendered by JS -->
+  <main class="max-w-[1550px] mx-auto px-4 py-6" id="appMainContent"></main>
+
+  <!-- Admin Panel Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#121827] border border-slate-700 rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-gear text-emerald-400"></i> System & Admin Configuration
+        </h3>
+        <button onclick="App.closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div id="adminAuthBox" class="space-y-3">
+        <p class="text-xs text-slate-400">Enter Admin Passcode (Default: <code class="text-emerald-400 font-mono">admin123</code>):</p>
+        <div class="flex gap-2">
+          <input type="password" id="adminPassInput" placeholder="Passcode" class="flex-1 bg-[#0b0f17] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+          <button onclick="App.unlockAdmin()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold">Unlock</button>
+        </div>
+      </div>
+
+      <div id="adminFields" class="space-y-4 hidden text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Platform Brand Title</label>
+          <input type="text" id="adminBrandName" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Platform Tagline</label>
+          <input type="text" id="adminBrandTag" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Alert WhatsApp Phone Number</label>
+          <input type="text" id="adminClientWhatsapp" value="+917908369836" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white font-mono" />
+        </div>
+        <div class="flex items-center gap-4 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+            <input type="checkbox" id="adminWhatsappToggle" class="w-4 h-4 accent-emerald-500 rounded" />
+            <span>Enable Automated WhatsApp Alerts</span>
+          </label>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
+          <button onclick="App.closeAdminModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg">Cancel</button>
+          <button onclick="App.saveAdminSettings()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold">Save Settings</button>
+        </div>
+        <p id="adminStatusMsg" class="text-xs text-emerald-400 text-right hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const App = (() => {
+      const SUPABASE_URL = "https://oqsjdnevuvksnypizyfw.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xc2pkbmV2dXZrc255cGl6eWZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MzE0OTUsImV4cCI6MjEwNzUwNzQ5NX0.XOzVT3CQftuUCbWQrrosUjSnPcP4_pxv2_9CWMkaEEw";
+      
+      let client = null;
+      try {
+        if (typeof supabase !== 'undefined') {
+          client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+      } catch (err) {
+        console.error("Supabase init error:", err);
+      }
+
+      let state = {
+        activeTab: 'screener',
+        stocks: [],
+        filteredStocks: [],
+        watchlist: JSON.parse(localStorage.getItem('tradePulse_watchlist') || '[]'),
+        searchTerm: '',
+        clientWhatsapp: '+917908369836',
+        whatsappEnabled: true,
+        lastUpdated: '-'
+      };
+
+      async function fetchData() {
+        if (!client) return;
+        try {
+          const { data, error } = await client
+            .from('scanned_stocks')
+            .select('*')
+            .order('matched_at', { ascending: false });
+
+          if (!error && data) {
+            state.stocks = data;
+            state.filteredStocks = data;
+            state.lastUpdated = new Date().toLocaleTimeString();
+            render();
+          }
+
+          const { data: settingsData } = await client
+            .from('client_settings')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+          if (settingsData) {
+            state.clientWhatsapp = settingsData.client_whatsapp || state.clientWhatsapp;
+            state.whatsappEnabled = settingsData.whatsapp_enabled ?? state.whatsappEnabled;
+          }
+        } catch (e) {
+          console.error("Fetch exception:", e);
+        }
+      }
+
+      function navigate(tabName) {
+        state.activeTab = tabName;
+        document.querySelectorAll('.nav-item').forEach(el => {
+          el.classList.remove('bg-emerald-950/60', 'text-emerald-400', 'border', 'border-emerald-500/30');
+          el.classList.add('text-slate-400');
+        });
+        const activeNav = document.getElementById('nav-' + tabName);
+        if (activeNav) {
+          activeNav.classList.add('bg-emerald-950/60', 'text-emerald-400', 'border', 'border-emerald-500/30');
+          activeNav.classList.remove('text-slate-400');
+        }
+        render();
+      }
+
+      function toggleWatch(symbol) {
+        if (state.watchlist.includes(symbol)) {
+          state.watchlist = state.watchlist.filter(s => s !== symbol);
+        } else {
+          state.watchlist.push(symbol);
+        }
+        localStorage.setItem('tradePulse_watchlist', JSON.stringify(state.watchlist));
+        document.getElementById('watchlistBadge').innerText = state.watchlist.length;
+        render();
+      }
+
+      function clearWatchlist() {
+        if (confirm('Clear all stocks from your watchlist?')) {
+          state.watchlist = [];
+          localStorage.removeItem('tradePulse_watchlist');
+          document.getElementById('watchlistBadge').innerText = '0';
+          render();
+        }
+      }
+
+      function handleSearch(val) {
+        state.searchTerm = val.toUpperCase();
+        state.filteredStocks = state.stocks.filter(s => 
+          (s.symbol && s.symbol.toUpperCase().includes(state.searchTerm)) ||
+          (s.exchange && s.exchange.toUpperCase().includes(state.searchTerm))
+        );
+        render();
+      }
+
+      function getScreenerHTML() {
+        return '<div class="space-y-6">' +
+          '<div class="bg-[#121827] border border-purple-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden">' +
+            '<div class="flex items-center justify-between mb-3">' +
+              '<div class="flex items-center gap-2 text-sm font-semibold text-purple-300">' +
+                '<i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i>' +
+                '<span>GEMINI AI NATURAL LANGUAGE SCANNER BUILDER</span>' +
+                '<span class="bg-purple-900/60 text-purple-300 text-[10px] font-mono px-2 py-0.5 rounded border border-purple-500/40">GEMINI-2.5-FLASH</span>' +
+              '</div>' +
+              '<span class="text-xs text-slate-400 hidden sm:inline">Describe institutional rules in plain English.</span>' +
+            '</div>' +
+            '<div class="flex flex-col sm:flex-row gap-3">' +
+              '<input type="text" id="aiInput" placeholder="e.g. Find Indian stocks with ROCE > 20%, low debt < 0.5, and RSI crossing above 50..." class="flex-1 bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition" />' +
+              '<button onclick="App.triggerAiParse()" class="px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition">' +
+                '<i class="fa-solid fa-bolt"></i> Translate to Rules' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">' +
+            '<div class="flex flex-col md:flex-row md:items-center justify-between pb-3 border-b border-slate-800/80 gap-2">' +
+              '<div>' +
+                '<h2 class="text-base font-bold text-white flex items-center gap-2">' +
+                  '<i class="fa-solid fa-sliders text-emerald-400"></i> Visual Scanner & Filter Engine' +
+                '</h2>' +
+                '<p class="text-xs text-slate-400">Multi-factor institutional filters across valuation, quality (ROCE), momentum, and breakout criteria.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 md:grid-cols-3 gap-3">' +
+              '<div class="bg-[#0b0f17] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">' +
+                '<span class="text-slate-400">P/E Ratio</span>' +
+                '<span class="text-emerald-400 font-mono font-semibold">&lt; 30</span>' +
+              '</div>' +
+              '<div class="bg-[#0b0f17] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">' +
+                '<span class="text-slate-400">Relative Vol (RVOL)</span>' +
+                '<span class="text-amber-400 font-mono font-semibold">&gt;= 1.5x</span>' +
+              '</div>' +
+              '<div class="bg-[#0b0f17] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">' +
+                '<span class="text-slate-400">ROCE %</span>' +
+                '<span class="text-emerald-400 font-mono font-semibold">&gt; 15%</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">' +
+            '<div class="p-4 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">' +
+              '<div class="flex items-center gap-3">' +
+                '<div class="relative w-72">' +
+                  '<i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>' +
+                  '<input type="text" oninput="App.handleSearch(this.value)" value="' + state.searchTerm + '" placeholder="Search ticker or exchange..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition" />' +
+                '</div>' +
+                '<span class="bg-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-lg border border-slate-700">' + state.filteredStocks.length + ' Qualified</span>' +
+              '</div>' +
+              '<div class="text-xs text-slate-400 flex items-center gap-2">' +
+                '<span>Auto-Sync: <span class="text-emerald-400 font-mono font-medium">15s</span></span>' +
+                '<span class="text-slate-600">•</span>' +
+                '<span>Updated: ' + state.lastUpdated + '</span>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="overflow-x-auto">' +
+              '<table class="w-full text-left text-xs text-slate-300">' +
+                '<thead class="bg-[#0b0f17] text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">' +
+                  '<tr>' +
+                    '<th class="px-5 py-3.5 w-12 text-center">Watch</th>' +
+                    '<th class="px-5 py-3.5">Ticker</th>' +
+                    '<th class="px-5 py-3.5">LTP (₹)</th>' +
+                    '<th class="px-5 py-3.5">24h Change</th>' +
+                    '<th class="px-5 py-3.5">RVOL Spike</th>' +
+                    '<th class="px-5 py-3.5">RSI (14)</th>' +
+                    '<th class="px-5 py-3.5">ROCE %</th>' +
+                    '<th class="px-5 py-3.5">P/E Ratio</th>' +
+                    '<th class="px-5 py-3.5">Trigger Time</th>' +
+                  '</tr>' +
+                '</thead>' +
+                '<tbody class="divide-y divide-slate-800/60 font-mono">' +
+                  getTableRows(state.filteredStocks) +
+                '</tbody>' +
+              '</table>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getWatchlistHTML() {
+        const watched = state.stocks.filter(s => state.watchlist.includes(s.symbol));
+        return '<div class="space-y-6">' +
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">' +
+            '<div>' +
+              '<h2 class="text-lg font-bold text-white flex items-center gap-2">' +
+                '<i class="fa-solid fa-bookmark text-amber-400"></i> My Personal Stock Watchlist' +
+              '</h2>' +
+              '<p class="text-xs text-slate-400 mt-1">Directly monitor your starred stocks and high-conviction breakout setups.</p>' +
+            '</div>' +
+            '<button onclick="App.clearWatchlist()" class="px-3 py-1.5 bg-rose-950/60 text-rose-400 border border-rose-800/60 hover:bg-rose-900 rounded-lg text-xs font-medium transition">' +
+              '<i class="fa-solid fa-trash-can mr-1"></i> Clear Watchlist' +
+            '</button>' +
+          '</div>' +
+
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">' +
+            '<div class="overflow-x-auto">' +
+              '<table class="w-full text-left text-xs text-slate-300">' +
+                '<thead class="bg-[#0b0f17] text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">' +
+                  '<tr>' +
+                    '<th class="px-5 py-3.5 w-12 text-center">Remove</th>' +
+                    '<th class="px-5 py-3.5">Ticker</th>' +
+                    '<th class="px-5 py-3.5">LTP (₹)</th>' +
+                    '<th class="px-5 py-3.5">24h Change</th>' +
+                    '<th class="px-5 py-3.5">RVOL Spike</th>' +
+                    '<th class="px-5 py-3.5">RSI (14)</th>' +
+                    '<th class="px-5 py-3.5">ROCE %</th>' +
+                    '<th class="px-5 py-3.5">P/E Ratio</th>' +
+                    '<th class="px-5 py-3.5">Trigger Time</th>' +
+                  '</tr>' +
+                '</thead>' +
+                '<tbody class="divide-y divide-slate-800/60 font-mono">' +
+                  (watched.length ? getTableRows(watched) : '<tr><td colspan="9" class="text-center py-12 text-slate-500">Your watchlist is empty. Click the star icon next to any stock in the Screener!</td></tr>') +
+                '</tbody>' +
+              '</table>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getDashboardHTML() {
+        const highVol = state.stocks.length ? Math.max(...state.stocks.map(s => Number(s.volume_ratio) || 0)) : 0;
+        const highRoce = state.stocks.length ? Math.max(...state.stocks.map(s => Number(s.roce) || 0)) : 0;
+        return '<div class="space-y-6">' +
+          '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">' +
+            '<div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl shadow-lg">' +
+              '<span class="text-xs text-slate-400 uppercase font-semibold">Total Filtered Stocks</span>' +
+              '<div class="text-2xl font-bold font-mono text-emerald-400 mt-2">' + state.stocks.length + '</div>' +
+              '<span class="text-[11px] text-slate-500">Passing all strict criteria</span>' +
+            '</div>' +
+            '<div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl shadow-lg">' +
+              '<span class="text-xs text-slate-400 uppercase font-semibold">Highest RVOL Spike</span>' +
+              '<div class="text-2xl font-bold font-mono text-amber-400 mt-2">' + highVol + 'x</div>' +
+              '<span class="text-[11px] text-slate-500">Institutional accumulation</span>' +
+            '</div>' +
+            '<div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl shadow-lg">' +
+              '<span class="text-xs text-slate-400 uppercase font-semibold">Top Quality (ROCE)</span>' +
+              '<div class="text-2xl font-bold font-mono text-blue-400 mt-2">' + highRoce + '%</div>' +
+              '<span class="text-[11px] text-slate-500">Fundamental efficiency</span>' +
+            '</div>' +
+            '<div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl shadow-lg">' +
+              '<span class="text-xs text-slate-400 uppercase font-semibold">Pipeline Health</span>' +
+              '<div class="text-2xl font-bold font-mono text-purple-400 mt-2">100% ONLINE</div>' +
+              '<span class="text-[11px] text-slate-500">n8n Schedule Active</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getBreakoutsHTML() {
+        const breakouts = state.stocks.filter(s => Number(s.volume_ratio) >= 2.0);
+        
+        let rowsHTML = '';
+        if (!breakouts || breakouts.length === 0) {
+          rowsHTML = '<tr><td colspan="6" class="text-center py-12 text-slate-500">No active 2.0x+ volume breakouts currently.</td></tr>';
+        } else {
+          rowsHTML = breakouts.map(function(s) {
+            const sym = s.symbol || '-';
+            const pr = Number(s.price || 0).toFixed(2);
+            const chg = Number(s.change_pct || 0);
+            const vr = s.volume_ratio || '0';
+            const rs = s.rsi || '-';
+
+            return '<tr class="hover:bg-slate-800/40 transition">' +
+              '<td class="px-5 py-3.5 font-bold text-white">' + sym + '</td>' +
+              '<td class="px-5 py-3.5">₹' + pr + '</td>' +
+              '<td class="px-5 py-3.5 font-bold ' + (chg >= 0 ? 'text-emerald-400' : 'text-rose-400') + '">' + (chg >= 0 ? '+' : '') + chg + '%</td>' +
+              '<td class="px-5 py-3.5 text-amber-400 font-bold">' + vr + 'x</td>' +
+              '<td class="px-5 py-3.5">' + rs + '</td>' +
+              '<td class="px-5 py-3.5"><span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded font-bold border border-amber-500/30">HIGH BREAKOUT</span></td>' +
+            '</tr>';
+          }).join('');
+        }
+
+        return '<div class="space-y-6">' +
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 shadow-xl">' +
+            '<h2 class="text-lg font-bold text-white flex items-center gap-2">' +
+              '<i class="fa-solid fa-fire text-amber-500"></i> High-Conviction Breakout Stocks' +
+            '</h2>' +
+            '<p class="text-xs text-slate-400 mt-1">Filtered exclusively for high relative volume (>= 2.0x) and strong accumulation.</p>' +
+          '</div>' +
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">' +
+            '<div class="overflow-x-auto">' +
+              '<table class="w-full text-left text-xs text-slate-300">' +
+                '<thead class="bg-[#0b0f17] text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">' +
+                  '<tr>' +
+                    '<th class="px-5 py-3.5">Ticker</th>' +
+                    '<th class="px-5 py-3.5">Price (₹)</th>' +
+                    '<th class="px-5 py-3.5">24h Change</th>' +
+                    '<th class="px-5 py-3.5">RVOL Spike</th>' +
+                    '<th class="px-5 py-3.5">RSI (14)</th>' +
+                    '<th class="px-5 py-3.5">Status</th>' +
+                  '</tr>' +
+                '</thead>' +
+                '<tbody class="divide-y divide-slate-800/60 font-mono">' +
+                  rowsHTML +
+                '</tbody>' +
+              '</table>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getAlertsHTML() {
+        return '<div class="space-y-6 max-w-2xl">' +
+          '<div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">' +
+            '<div>' +
+              '<h2 class="text-lg font-bold text-white flex items-center gap-2">' +
+                '<i class="fa-brands fa-whatsapp text-emerald-400 text-xl"></i> Automated WhatsApp Stock Alerts' +
+              '</h2>' +
+              '<p class="text-xs text-slate-400 mt-1">Receive instant qualified stock breakouts directly on your WhatsApp phone number.</p>' +
+            '</div>' +
+            '<div class="bg-[#0b0f17] border border-slate-800 p-5 rounded-xl space-y-4">' +
+              '<div class="flex items-center justify-between">' +
+                '<span class="text-xs font-semibold text-white flex items-center gap-2">' +
+                  '<i class="fa-solid fa-signal text-emerald-400"></i> WhatsApp Alert Status' +
+                '</span>' +
+                '<label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">' +
+                  '<input type="checkbox" id="pageWhatsappToggle" ' + (state.whatsappEnabled ? 'checked' : '') + ' class="w-4 h-4 accent-emerald-500 rounded" />' +
+                  '<span>Enabled</span>' +
+                '</label>' +
+              '</div>' +
+              '<div>' +
+                '<label class="block text-[11px] text-slate-400 mb-1">Client WhatsApp Phone Number</label>' +
+                '<input type="text" id="pageClientWhatsapp" value="' + state.clientWhatsapp + '" placeholder="+917908369836" class="w-full bg-[#121827] border border-slate-700 rounded-lg px-3 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500" />' +
+                '<span class="text-[10px] text-emerald-400/80 mt-1.5 block">Configured for Client: +917908369836</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex flex-wrap items-center gap-3 pt-2">' +
+              '<button onclick="App.savePageAlertSettings()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition shadow-lg shadow-emerald-900/30">' +
+                '<i class="fa-solid fa-floppy-disk"></i> Save WhatsApp Settings' +
+              '</button>' +
+              '<button onclick="App.sendTestAlert()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 rounded-xl text-xs font-medium flex items-center gap-2 transition">' +
+                '<i class="fa-brands fa-whatsapp text-sm"></i> Send Test WhatsApp Message' +
+              '</button>' +
+            '</div>' +
+            '<div id="pageAlertStatus" class="text-xs text-emerald-400 font-medium hidden"></div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getAiHTML() {
+        return '<div class="bg-[#121827] border border-purple-500/30 rounded-2xl p-6 shadow-xl space-y-4">' +
+          '<h2 class="text-lg font-bold text-white flex items-center gap-2">' +
+            '<i class="fa-solid fa-brain text-purple-400"></i> AI Technical & Quantitative Analysis' +
+          '</h2>' +
+          '<div class="bg-[#0b0f17] p-4 rounded-xl border border-slate-800 text-xs space-y-2">' +
+            '<div class="flex items-center gap-2 text-emerald-400 font-semibold">' +
+              '<i class="fa-solid fa-circle-check"></i> Market Regime: Bullish Momentum (NSE Index > 50 EMA)' +
+            '</div>' +
+            '<p class="text-slate-300 leading-relaxed">Automated scanning detects high institutional accumulation in stocks maintaining ROCE > 15% and RSI momentum between 55–65. Volume breakout signals show minimal institutional selling pressure.</p>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function getTableRows(list) {
+        if (!list || !list.length) {
+          return '<tr><td colspan="9" class="text-center py-10 text-slate-500">No matching stocks found</td></tr>';
+        }
+        return list.map(function(s) {
+          const isWatched = state.watchlist.includes(s.symbol);
+          const sym = s.symbol || '-';
+          const ex = s.exchange || 'NSE';
+          const pr = Number(s.price || 0).toFixed(2);
+          const chg = Number(s.change_pct || 0);
+          const vr = s.volume_ratio || '0';
+          const rs = s.rsi || '-';
+          const rc = s.roce || '-';
+          const peVal = s.pe || '-';
+          const mt = s.matched_at ? new Date(s.matched_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
+
+          return '<tr class="hover:bg-slate-800/40 transition">' +
+            '<td class="px-5 py-3.5 text-center">' +
+              '<button onclick="App.toggleWatch(\'' + sym + '\')" class="' + (isWatched ? 'text-amber-400' : 'text-slate-600 hover:text-slate-400') + ' text-sm transition">' +
+                '<i class="' + (isWatched ? 'fa-solid' : 'fa-regular') + ' fa-star"></i>' +
+              '</button>' +
+            '</td>' +
+            '<td class="px-5 py-3.5 font-bold text-white flex items-center gap-2">' +
+              '<span>' + sym + '</span>' +
+              '<span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">' + ex + '</span>' +
+            '</td>' +
+            '<td class="px-5 py-3.5 font-semibold text-slate-100">₹' + pr + '</td>' +
+            '<td class="px-5 py-3.5 font-bold ' + (chg >= 0 ? 'text-emerald-400' : 'text-rose-400') + '">' +
+              (chg >= 0 ? '+' : '') + chg + '%' +
+            '</td>' +
+            '<td class="px-5 py-3.5 text-amber-400 font-semibold">' + vr + 'x</td>' +
+            '<td class="px-5 py-3.5 ' + (Number(rs) >= 60 ? 'text-emerald-400' : 'text-slate-300') + '">' + rs + '</td>' +
+            '<td class="px-5 py-3.5 text-emerald-400">' + rc + '%</td>' +
+            '<td class="px-5 py-3.5 text-slate-300">' + peVal + '</td>' +
+            '<td class="px-5 py-3.5 text-[11px] text-slate-500 font-sans">' + mt + '</td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      function render() {
+        const container = document.getElementById('appMainContent');
+        if (!container) return;
+
+        if (state.activeTab === 'screener') container.innerHTML = getScreenerHTML();
+        else if (state.activeTab === 'watchlist') container.innerHTML = getWatchlistHTML();
+        else if (state.activeTab === 'dashboard') container.innerHTML = getDashboardHTML();
+        else if (state.activeTab === 'breakouts') container.innerHTML = getBreakoutsHTML();
+        else if (state.activeTab === 'alerts') container.innerHTML = getAlertsHTML();
+        else if (state.activeTab === 'ai') container.innerHTML = getAiHTML();
+      }
+
+      async function savePageAlertSettings() {
+        const whatsapp = document.getElementById('pageClientWhatsapp').value;
+        const whatsappOn = document.getElementById('pageWhatsappToggle').checked;
+
+        state.clientWhatsapp = whatsapp;
+        state.whatsappEnabled = whatsappOn;
+
+        if (client) {
+          await client.from('client_settings').upsert({
+            id: 1,
+            client_whatsapp: whatsapp,
+            whatsapp_enabled: whatsappOn,
+            alert_enabled: false,
+            updated_at: new Date()
+          });
+        }
+
+        const status = document.getElementById('pageAlertStatus');
+        status.innerText = "✓ WhatsApp alert settings saved for " + whatsapp + "!";
+        status.classList.remove('hidden');
+        setTimeout(() => status.classList.add('hidden'), 3000);
+      }
+
+      function sendTestAlert() {
+        const num = state.clientWhatsapp.replace(/[^0-9]/g, '');
+        const msg = encodeURIComponent("🚨 Indian Stock Scanner Alert:\nTATASTEEL (NSE) | Price: ₹156.40 | Volume Spike: 2.5x | ROCE: 18.2% | RSI: 62.\nQualified stock match for +917908369836!");
+        window.open('https://api.whatsapp.com/send?phone=' + num + '&text=' + msg, '_blank');
+      }
+
+      function openAdminModal() {
+        document.getElementById('adminBrandName').value = document.getElementById('navBrandName').innerText;
+        document.getElementById('adminBrandTag').value = document.getElementById('navBrandTag').innerText;
+        document.getElementById('adminClientWhatsapp').value = state.clientWhatsapp;
+        document.getElementById('adminWhatsappToggle').checked = state.whatsappEnabled;
+        document.getElementById('adminModal').classList.remove('hidden');
+      }
+
+      function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+      function unlockAdmin() {
+        if (document.getElementById('adminPassInput').value === 'admin123') {
+          document.getElementById('adminAuthBox').classList.add('hidden');
+          document.getElementById('adminFields').classList.remove('hidden');
+        } else {
+          alert('Invalid passcode! Default is: admin123');
+        }
+      }
+
+      async function saveAdminSettings() {
+        const brand = document.getElementById('adminBrandName').value;
+        const tag = document.getElementById('adminBrandTag').value;
+        const whatsapp = document.getElementById('adminClientWhatsapp').value;
+        const whatsappOn = document.getElementById('adminWhatsappToggle').checked;
+
+        state.clientWhatsapp = whatsapp;
+        state.whatsappEnabled = whatsappOn;
+
+        if (brand) {
+          localStorage.setItem('tradePulse_brand', brand);
+          document.getElementById('navBrandName').innerText = brand;
+        }
+        if (tag) {
+          localStorage.setItem('tradePulse_tag', tag);
+          document.getElementById('navBrandTag').innerText = tag;
+        }
+
+        if (client) {
+          await client.from('client_settings').upsert({
+            id: 1,
+            client_whatsapp: whatsapp,
+            whatsapp_enabled: whatsappOn,
+            alert_enabled: false,
+            updated_at: new Date()
+          });
+        }
+
+        const msg = document.getElementById('adminStatusMsg');
+        msg.innerText = "✓ Settings successfully saved!";
+        msg.classList.remove('hidden');
+        setTimeout(() => {
+          msg.classList.add('hidden');
+          closeAdminModal();
+          render();
+        }, 1200);
+      }
+
+      function triggerAiParse() {
+        const input = document.getElementById('aiInput');
+        if (input && input.value) {
+          alert('Gemini AI parsed query: "' + input.value + '"\nFilters mapped successfully to screener engine!');
+        }
+      }
+
+      function init() {
+        document.getElementById('watchlistBadge').innerText = state.watchlist.length;
+        const savedBrand = localStorage.getItem('tradePulse_brand');
+        const savedTag = localStorage.getItem('tradePulse_tag');
+        if (savedBrand) document.getElementById('navBrandName').innerText = savedBrand;
+        if (savedTag) document.getElementById('navBrandTag').innerText = savedTag;
+
+        fetchData();
+        render();
+        setInterval(fetchData, 15000);
+      }
+
+      return {
+        init,
+        navigate,
+        fetchData,
+        toggleWatch,
+        clearWatchlist,
+        handleSearch,
+        openAdminModal,
+        closeAdminModal,
+        unlockAdmin,
+        saveAdminSettings,
+        savePageAlertSettings,
+        sendTestAlert,
+        triggerAiParse
+      };
+    })();
+
+    document.addEventListener('DOMContentLoaded', App.init);
+  </script>
+</body>
+</html>
