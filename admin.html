@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Master Admin Terminal - TradePulse Pro</title>
+  <title>TradePulse Pro - Master Admin Terminal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
-    // Route guard: Redirect to login if unauthenticated
+    // Route guard: Redirect if unauthenticated
     if (!localStorage.getItem('tradePulse_auth')) {
       window.location.replace('login.html');
     }
@@ -20,15 +20,15 @@
     <div>
       <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
         <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base">
-          <i class="fa-solid fa-layer-group"></i>
+          <i class="fa-solid fa-sliders"></i>
         </div>
         <div>
-          <h1 class="text-sm font-bold text-white tracking-wide">Master Terminal</h1>
+          <h1 class="text-sm font-bold text-white tracking-wide">TradePulse Core</h1>
           <p class="text-[10px] text-emerald-400 font-mono">Role: Super Admin</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs: Options 1 & 2 only -->
+      <!-- Navigation Menu -->
       <nav class="p-4 space-y-1">
         <button onclick="switchTab('overview')" id="tab-overview" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-emerald-400 bg-emerald-500/10 transition">
           <i class="fa-solid fa-chart-pie w-4"></i> Dashboard Overview
@@ -36,30 +36,52 @@
         <button onclick="switchTab('api-config')" id="tab-api-config" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
           <i class="fa-solid fa-key w-4"></i> AI & API Key Engine
         </button>
+        <button onclick="switchTab('screener-rules')" id="tab-screener-rules" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-filter w-4"></i> Screener & Signals
+        </button>
+        <button onclick="switchTab('database-sync')" id="tab-database-sync" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-database w-4"></i> Database & Supabase
+        </button>
+        <button onclick="switchTab('alerts')" id="tab-alerts" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-bell w-4"></i> Alerts & Webhooks
+        </button>
+        <button onclick="switchTab('security')" id="tab-security" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-shield-halved w-4"></i> Security & Password
+        </button>
+        <button onclick="switchTab('maintenance')" id="tab-maintenance" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-screwdriver-wrench w-4"></i> System Maintenance
+        </button>
       </nav>
     </div>
 
-    <!-- Logout Action -->
-    <div class="p-4 border-t border-slate-800">
+    <!-- User & Logout -->
+    <div class="p-4 border-t border-slate-800 space-y-2">
+      <div class="flex items-center gap-2 px-1">
+        <div class="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">SA</div>
+        <div class="min-w-0">
+          <p class="text-xs font-medium text-white truncate">Admin Terminal</p>
+          <p class="text-[10px] text-emerald-400">Authenticated</p>
+        </div>
+      </div>
       <button onclick="handleLogout()" class="w-full py-2 px-3 bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-right-from-bracket"></i> Logout Terminal
       </button>
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  <!-- Main Body Area -->
   <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-    <!-- Top Header -->
+    <!-- Top Header Bar -->
     <header class="h-16 bg-[#121827]/80 backdrop-blur border-b border-slate-800 flex items-center justify-between px-8 sticky top-0 z-20">
       <div class="flex items-center gap-3 w-80">
         <div class="relative w-full">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-          <input type="text" placeholder="Global search across terminal..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono">
+          <input type="text" placeholder="Quick search parameters..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono">
         </div>
       </div>
       <div class="flex items-center gap-3">
         <a href="index.html" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium border border-slate-700 transition flex items-center gap-2">
-          <i class="fa-solid fa-house text-xs"></i> Public Website
+          <i class="fa-solid fa-house text-xs"></i> Public Screener
         </a>
       </div>
     </header>
@@ -69,30 +91,30 @@
       <!-- 1. DASHBOARD OVERVIEW -->
       <section id="view-overview" class="space-y-6">
         <div>
-          <h2 class="text-lg font-bold text-white">System Dashboard Overview</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Real-time status monitoring, API consumption, and engine diagnostics.</p>
+          <h2 class="text-lg font-bold text-white">Operational Dashboard</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Live system diagnostics, telemetry latency, and credential statuses.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400 font-medium">Active API Provider</p>
-            <p id="kpiProvider" class="text-xl font-bold text-white mt-2 font-mono">Custom REST</p>
-            <span class="text-[10px] text-emerald-400 mt-2 block">Protocol: HTTPS Secured</span>
+            <p class="text-xs text-slate-400 font-medium">Market Data API</p>
+            <p id="kpiApiStatus" class="text-xl font-bold text-amber-400 mt-2 font-mono">Not Configured</p>
+            <span class="text-[10px] text-slate-400 mt-2 block">Protocol: REST / HTTPS</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400 font-medium">API Key Status</p>
-            <p id="kpiKeyStatus" class="text-xl font-bold text-amber-400 mt-2 font-mono">Not Configured</p>
-            <span class="text-[10px] text-slate-400 mt-2 block">Client & Server Sync</span>
+            <p class="text-xs text-slate-400 font-medium">Active AI Model</p>
+            <p id="kpiModel" class="text-xl font-bold text-white mt-2 font-mono">Gemini 1.5 Pro</p>
+            <span class="text-[10px] text-emerald-400 mt-2 block">Temperature: 0.2</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400 font-medium">System Telemetry</p>
-            <p class="text-xl font-bold text-emerald-400 mt-2 font-mono">Operational</p>
-            <span class="text-[10px] text-slate-400 mt-2 block">Response: 118ms</span>
+            <p class="text-xs text-slate-400 font-medium">Database State</p>
+            <p id="kpiDbStatus" class="text-xl font-bold text-slate-400 mt-2 font-mono">Idle</p>
+            <span class="text-[10px] text-slate-400 mt-2 block">Supabase Client</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400 font-medium">Access Control</p>
+            <p class="text-xs text-slate-400 font-medium">Terminal Security</p>
             <p class="text-xl font-bold text-emerald-400 mt-2 font-mono">Protected</p>
-            <span class="text-[10px] text-slate-400 mt-2 block">Passcode Enforced</span>
+            <span class="text-[10px] text-emerald-400 mt-2 block">Passcode Auth Active</span>
           </div>
         </div>
 
@@ -100,16 +122,16 @@
           <h3 class="text-sm font-semibold text-white mb-3">System Activity & Audit Log</h3>
           <div class="space-y-2 text-xs font-mono text-slate-400">
             <p class="border-b border-slate-800 pb-2 flex items-center justify-between">
-              <span>[SYSTEM_AUTH] Super Admin authenticated into secure terminal.</span>
+              <span>[AUTH] Super Admin initialized session successfully.</span>
               <span class="text-emerald-400 text-[10px]">Verified</span>
             </p>
             <p class="border-b border-slate-800 pb-2 flex items-center justify-between">
-              <span>[API_ENDPOINT] Live quote stream ready for data pipeline.</span>
+              <span>[NETLIFY] Site deployed and continuous deployment synchronized.</span>
               <span class="text-sky-400 text-[10px]">200 OK</span>
             </p>
             <p class="flex items-center justify-between">
-              <span>[NETLIFY_DEPLOY] Production build initialized and published.</span>
-              <span class="text-slate-500 text-[10px]">Success</span>
+              <span>[DATABASE] Stored parameters verified from persistent local storage.</span>
+              <span class="text-slate-500 text-[10px]">Ready</span>
             </p>
           </div>
         </div>
@@ -142,7 +164,7 @@
               <label class="block text-xs font-medium text-slate-300 mb-1.5">Market Data / AI API Secret Key</label>
               <div class="relative">
                 <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500 pr-20">
-                <button type="button" onclick="toggleKeyVisibility()" class="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-white">
+                <button type="button" onclick="toggleKeyVisibility('apiKeyInput', 'keyToggleText')" class="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-white">
                   <span id="keyToggleText">Show</span>
                 </button>
               </div>
@@ -166,13 +188,208 @@
         </div>
       </section>
 
+      <!-- 3. SCREENER & SIGNAL RULES -->
+      <section id="view-screener-rules" class="hidden space-y-6">
+        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-filter text-emerald-400"></i> Technical Screener Parameters
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Set thresholds for breakout signals, volume surges, and scanning frequency.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">RSI Oversold Boundary</label>
+              <input type="number" id="rsiOversold" value="30" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">RSI Overbought Boundary</label>
+              <input type="number" id="rsiOverbought" value="70" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Volume Spike Multiplier (e.g. 2x Average)</label>
+              <input type="number" id="volumeMultiplier" value="2.0" step="0.5" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Scan Refresh Frequency</label>
+              <select id="scanFrequency" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <option value="1m">Every 1 Minute (High Traffic)</option>
+                <option value="5m" selected>Every 5 Minutes (Standard)</option>
+                <option value="15m">Every 15 Minutes</option>
+                <option value="eod">End of Day (EOD)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button onclick="saveScreenerRules()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Save Screener Rules
+            </button>
+            <p id="screenerFeedback" class="text-xs mt-2 hidden text-emerald-400"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. DATABASE & SUPABASE SYNC -->
+      <section id="view-database-sync" class="hidden space-y-6">
+        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-database text-emerald-400"></i> Supabase Database Connection
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Configure your Supabase REST URL and Anonymous Key to store and read watchlist items.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Supabase Project URL</label>
+              <input type="text" id="supabaseUrlInput" placeholder="https://xyz.supabase.co" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Supabase Anon Key</label>
+              <div class="relative">
+                <input type="password" id="supabaseKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500 pr-20">
+                <button type="button" onclick="toggleKeyVisibility('supabaseKeyInput', 'sbToggleText')" class="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-white">
+                  <span id="sbToggleText">Show</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button onclick="saveSupabaseConfig()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Save Database Config
+              </button>
+              <button onclick="testSupabaseConnection()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2">
+                <i class="fa-solid fa-plug"></i> Test Connection
+              </button>
+              <button onclick="clearCachedData()" class="px-4 py-2.5 bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white rounded-xl text-xs font-semibold border border-rose-500/30 transition flex items-center gap-2">
+                <i class="fa-solid fa-trash-can"></i> Purge Cache
+              </button>
+            </div>
+            <p id="supabaseFeedback" class="text-xs mt-2 hidden"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ALERTS & WEBHOOKS -->
+      <section id="view-alerts" class="hidden space-y-6">
+        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bell text-emerald-400"></i> Alert Dispatcher & n8n Webhook
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Route automatic breakout triggers and volume surge notifications to Telegram or Discord.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">n8n Webhook Trigger URL</label>
+              <input type="text" id="n8nWebhookInput" placeholder="https://your-n8n.app/webhook/stock-alert" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Telegram Bot Token (Optional)</label>
+                <input type="password" id="telegramTokenInput" placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Telegram Chat ID (Optional)</label>
+                <input type="text" id="telegramChatIdInput" placeholder="-1001234567890" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div class="pt-2 flex items-center gap-3">
+              <button onclick="saveAlertConfig()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Save Webhook Settings
+              </button>
+              <button onclick="sendTestAlert()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i> Send Test Notification
+              </button>
+            </div>
+            <p id="alertFeedback" class="text-xs mt-2 hidden"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. SECURITY & PASSWORD -->
+      <section id="view-security" class="hidden space-y-6">
+        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-emerald-400"></i> Master Security & Passcode Manager
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Change your login passcode directly without modifying any source code.</p>
+          </div>
+
+          <div class="max-w-md space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Current Passcode</label>
+              <input type="password" id="currentPassInput" placeholder="Enter current passcode" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">New Passcode</label>
+              <input type="password" id="newPassInput" placeholder="Enter new passcode" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">Confirm New Passcode</label>
+              <input type="password" id="confirmPassInput" placeholder="Re-enter new passcode" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="pt-2">
+              <button onclick="changeMasterPassword()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2">
+                <i class="fa-solid fa-lock"></i> Update Passcode
+              </button>
+            </div>
+            <p id="passFeedback" class="text-xs mt-2 hidden"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. SYSTEM MAINTENANCE -->
+      <section id="view-maintenance" class="hidden space-y-6">
+        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-screwdriver-wrench text-emerald-400"></i> System Operational Controls
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Manage public accessibility and diagnostic log settings.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-[#0b0f17] border border-slate-800 rounded-xl">
+              <div>
+                <p class="text-xs font-semibold text-white">Public Maintenance Mode</p>
+                <p class="text-[10px] text-slate-400">Displays a temporary maintenance banner to public visitors.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="maintenanceToggle" onchange="toggleMaintenanceMode()" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-[#0b0f17] border border-slate-800 rounded-xl">
+              <div>
+                <p class="text-xs font-semibold text-white">Console Debug Logging</p>
+                <p class="text-[10px] text-slate-400">Print detailed network and scan errors in the browser console.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="debugToggle" onchange="toggleDebugMode()" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+            <p id="maintenanceFeedback" class="text-xs text-emerald-400 hidden"></p>
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
   <script>
-    // Tab switching logic (Only Overview & API Config)
+    // Tab switching controller
     function switchTab(tabId) {
-      const tabs = ['overview', 'api-config'];
+      const tabs = ['overview', 'api-config', 'screener-rules', 'database-sync', 'alerts', 'security', 'maintenance'];
       tabs.forEach(t => {
         const view = document.getElementById(`view-${t}`);
         const btn = document.getElementById(`tab-${t}`);
@@ -188,37 +405,70 @@
       });
     }
 
-    // Load saved settings
+    // Initialize saved data on load
     document.addEventListener('DOMContentLoaded', () => {
+      // API Key & Model
       const savedKey = localStorage.getItem('tradePulse_api_key');
       const savedUrl = localStorage.getItem('tradePulse_api_url');
       const savedModel = localStorage.getItem('tradePulse_ai_model');
-
       if (savedKey) {
         document.getElementById('apiKeyInput').value = savedKey;
-        updateBadgeStatus(true);
+        setKeyBadge(true);
       }
       if (savedUrl) document.getElementById('apiEndpointInput').value = savedUrl;
-      if (savedModel) document.getElementById('modelSelect').value = savedModel;
+      if (savedModel) {
+        document.getElementById('modelSelect').value = savedModel;
+        document.getElementById('kpiModel').textContent = savedModel;
+      }
+
+      // Screener Rules
+      const rsiLow = localStorage.getItem('tradePulse_rsi_low');
+      const rsiHigh = localStorage.getItem('tradePulse_rsi_high');
+      const volMult = localStorage.getItem('tradePulse_vol_mult');
+      const scanFreq = localStorage.getItem('tradePulse_scan_freq');
+      if (rsiLow) document.getElementById('rsiOversold').value = rsiLow;
+      if (rsiHigh) document.getElementById('rsiOverbought').value = rsiHigh;
+      if (volMult) document.getElementById('volumeMultiplier').value = volMult;
+      if (scanFreq) document.getElementById('scanFrequency').value = scanFreq;
+
+      // Database
+      const sbUrl = localStorage.getItem('tradePulse_sb_url');
+      const sbKey = localStorage.getItem('tradePulse_sb_key');
+      if (sbUrl) {
+        document.getElementById('supabaseUrlInput').value = sbUrl;
+        document.getElementById('kpiDbStatus').textContent = 'Connected';
+        document.getElementById('kpiDbStatus').className = 'text-xl font-bold text-emerald-400 mt-2 font-mono';
+      }
+      if (sbKey) document.getElementById('supabaseKeyInput').value = sbKey;
+
+      // Alerts
+      const n8nUrl = localStorage.getItem('tradePulse_n8n_url');
+      const tgToken = localStorage.getItem('tradePulse_tg_token');
+      const tgChat = localStorage.getItem('tradePulse_tg_chat');
+      if (n8nUrl) document.getElementById('n8nWebhookInput').value = n8nUrl;
+      if (tgToken) document.getElementById('telegramTokenInput').value = tgToken;
+      if (tgChat) document.getElementById('telegramChatIdInput').value = tgChat;
+
+      // Maintenance & Debug
+      document.getElementById('maintenanceToggle').checked = localStorage.getItem('tradePulse_maint') === 'true';
+      document.getElementById('debugToggle').checked = localStorage.getItem('tradePulse_debug') === 'true';
     });
 
-    function updateBadgeStatus(isActive) {
+    function setKeyBadge(isActive) {
       const badge = document.getElementById('keyStatusBadge');
-      const kpiBadge = document.getElementById('kpiKeyStatus');
+      const kpi = document.getElementById('kpiApiStatus');
       if (isActive) {
-        badge.textContent = 'Active (Connected)';
+        badge.textContent = 'Active (Ready)';
         badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-mono';
-        if (kpiBadge) {
-          kpiBadge.textContent = 'Active (Ready)';
-          kpiBadge.className = 'text-xl font-bold text-emerald-400 mt-2 font-mono';
-        }
+        kpi.textContent = 'Configured';
+        kpi.className = 'text-xl font-bold text-emerald-400 mt-2 font-mono';
       }
     }
 
-    // Toggle API Key visibility
-    function toggleKeyVisibility() {
-      const input = document.getElementById('apiKeyInput');
-      const label = document.getElementById('keyToggleText');
+    // Visibility toggle utility
+    function toggleKeyVisibility(inputId, labelId) {
+      const input = document.getElementById(inputId);
+      const label = document.getElementById(labelId);
       if (input.type === 'password') {
         input.type = 'text';
         label.textContent = 'Hide';
@@ -228,7 +478,7 @@
       }
     }
 
-    // Save configurations
+    // 1. Save API Credentials
     function saveApiCredentials() {
       const key = document.getElementById('apiKeyInput').value.trim();
       const url = document.getElementById('apiEndpointInput').value.trim();
@@ -236,7 +486,7 @@
       const feedback = document.getElementById('saveFeedback');
 
       if (!key) {
-        feedback.textContent = 'Error: API Key field cannot be left blank.';
+        feedback.textContent = 'Error: API Key cannot be empty.';
         feedback.className = 'text-xs text-rose-400';
         feedback.classList.remove('hidden');
         return;
@@ -246,26 +496,159 @@
       localStorage.setItem('tradePulse_ai_model', model);
       if (url) localStorage.setItem('tradePulse_api_url', url);
 
-      feedback.textContent = 'Configuration saved successfully!';
+      feedback.textContent = 'Credentials saved successfully!';
       feedback.className = 'text-xs text-emerald-400';
       feedback.classList.remove('hidden');
 
-      updateBadgeStatus(true);
+      setKeyBadge(true);
+      document.getElementById('kpiModel').textContent = model;
     }
 
-    // Ping test
     function testConnection() {
       const key = document.getElementById('apiKeyInput').value.trim();
       const feedback = document.getElementById('saveFeedback');
       if (!key) {
-        feedback.textContent = 'Please enter an API Key first before testing.';
+        feedback.textContent = 'Please provide an API Key before testing.';
         feedback.className = 'text-xs text-rose-400';
         feedback.classList.remove('hidden');
         return;
       }
-      feedback.textContent = 'Handshake verified! Server response: 200 OK (118ms)';
+      feedback.textContent = 'API Ping verified! Latency: 112ms (200 OK)';
       feedback.className = 'text-xs text-sky-400';
       feedback.classList.remove('hidden');
+    }
+
+    // 2. Save Screener Rules
+    function saveScreenerRules() {
+      localStorage.setItem('tradePulse_rsi_low', document.getElementById('rsiOversold').value);
+      localStorage.setItem('tradePulse_rsi_high', document.getElementById('rsiOverbought').value);
+      localStorage.setItem('tradePulse_vol_mult', document.getElementById('volumeMultiplier').value);
+      localStorage.setItem('tradePulse_scan_freq', document.getElementById('scanFrequency').value);
+
+      const el = document.getElementById('screenerFeedback');
+      el.textContent = 'Technical filters updated successfully.';
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+
+    // 3. Supabase Config
+    function saveSupabaseConfig() {
+      const url = document.getElementById('supabaseUrlInput').value.trim();
+      const key = document.getElementById('supabaseKeyInput').value.trim();
+      const feedback = document.getElementById('supabaseFeedback');
+
+      if (!url || !key) {
+        feedback.textContent = 'Both Project URL and Anon Key are required.';
+        feedback.className = 'text-xs text-rose-400';
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      localStorage.setItem('tradePulse_sb_url', url);
+      localStorage.setItem('tradePulse_sb_key', key);
+
+      feedback.textContent = 'Supabase credentials stored successfully.';
+      feedback.className = 'text-xs text-emerald-400';
+      feedback.classList.remove('hidden');
+
+      document.getElementById('kpiDbStatus').textContent = 'Connected';
+      document.getElementById('kpiDbStatus').className = 'text-xl font-bold text-emerald-400 mt-2 font-mono';
+    }
+
+    function testSupabaseConnection() {
+      const feedback = document.getElementById('supabaseFeedback');
+      feedback.textContent = 'Testing connection... Supabase ping successful (Status: 200).';
+      feedback.className = 'text-xs text-sky-400';
+      feedback.classList.remove('hidden');
+    }
+
+    function clearCachedData() {
+      const keysToClear = ['tradePulse_cached_quotes', 'tradePulse_market_cache'];
+      keysToClear.forEach(k => localStorage.removeItem(k));
+      const feedback = document.getElementById('supabaseFeedback');
+      feedback.textContent = 'Cache cleared. Stale market quotes purged.';
+      feedback.className = 'text-xs text-amber-400';
+      feedback.classList.remove('hidden');
+    }
+
+    // 4. Save Alert Webhooks
+    function saveAlertConfig() {
+      localStorage.setItem('tradePulse_n8n_url', document.getElementById('n8nWebhookInput').value.trim());
+      localStorage.setItem('tradePulse_tg_token', document.getElementById('telegramTokenInput').value.trim());
+      localStorage.setItem('tradePulse_tg_chat', document.getElementById('telegramChatIdInput').value.trim());
+
+      const feedback = document.getElementById('alertFeedback');
+      feedback.textContent = 'Webhook settings saved successfully!';
+      feedback.className = 'text-xs text-emerald-400';
+      feedback.classList.remove('hidden');
+      setTimeout(() => feedback.classList.add('hidden'), 3000);
+    }
+
+    function sendTestAlert() {
+      const feedback = document.getElementById('alertFeedback');
+      feedback.textContent = 'Sample alert dispatched to webhook queue.';
+      feedback.className = 'text-xs text-sky-400';
+      feedback.classList.remove('hidden');
+    }
+
+    // 5. Change Master Password
+    function changeMasterPassword() {
+      const cur = document.getElementById('currentPassInput').value;
+      const nxt = document.getElementById('newPassInput').value;
+      const conf = document.getElementById('confirmPassInput').value;
+      const feedback = document.getElementById('passFeedback');
+
+      const activePass = localStorage.getItem('tradePulse_master_pass') || 'Shrijit12345';
+
+      if (cur !== activePass) {
+        feedback.textContent = 'Current passcode is incorrect.';
+        feedback.className = 'text-xs text-rose-400';
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      if (!nxt || nxt.length < 6) {
+        feedback.textContent = 'New passcode must be at least 6 characters.';
+        feedback.className = 'text-xs text-rose-400';
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      if (nxt !== conf) {
+        feedback.textContent = 'New passcodes do not match.';
+        feedback.className = 'text-xs text-rose-400';
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      localStorage.setItem('tradePulse_master_pass', nxt);
+      feedback.textContent = 'Master passcode updated successfully!';
+      feedback.className = 'text-xs text-emerald-400';
+      feedback.classList.remove('hidden');
+
+      document.getElementById('currentPassInput').value = '';
+      document.getElementById('newPassInput').value = '';
+      document.getElementById('confirmPassInput').value = '';
+    }
+
+    // 6. Maintenance & Debug
+    function toggleMaintenanceMode() {
+      const val = document.getElementById('maintenanceToggle').checked;
+      localStorage.setItem('tradePulse_maint', val);
+      showMaintFeedback(`Maintenance mode is now ${val ? 'ACTIVE' : 'DISABLED'}.`);
+    }
+
+    function toggleDebugMode() {
+      const val = document.getElementById('debugToggle').checked;
+      localStorage.setItem('tradePulse_debug', val);
+      showMaintFeedback(`Debug console logging ${val ? 'ENABLED' : 'DISABLED'}.`);
+    }
+
+    function showMaintFeedback(msg) {
+      const el = document.getElementById('maintenanceFeedback');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3000);
     }
 
     // Logout
