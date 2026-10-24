@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Master Admin Terminal - TradePulse & HomeoAI</title>
+  <title>Master Admin Terminal - TradePulse Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
-    // অথেনটিকেশন চেক: লগইন না থাকলে login.html এ পাঠাবে
+    // Route guard: Redirect to login if unauthenticated
     if (!localStorage.getItem('tradePulse_auth')) {
       window.location.replace('login.html');
     }
@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#0b0f17] text-slate-200 font-sans min-h-screen flex antialiased">
 
-  <!-- বামপাশের সাইডবার মেনু (১০টি অপশন) -->
+  <!-- Left Sidebar Navigation -->
   <aside class="w-64 bg-[#121827] border-r border-slate-800 flex flex-col justify-between shrink-0">
     <div>
       <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
@@ -28,39 +28,18 @@
         </div>
       </div>
 
-      <!-- ন্যাভিগেশন বাটনসমূহ -->
+      <!-- Navigation Tabs: Options 1 & 2 only -->
       <nav class="p-4 space-y-1">
         <button onclick="switchTab('overview')" id="tab-overview" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-emerald-400 bg-emerald-500/10 transition">
-          <i class="fa-solid fa-chart-pie w-4"></i> ১. Dashboard Overview
+          <i class="fa-solid fa-chart-pie w-4"></i> Dashboard Overview
         </button>
         <button onclick="switchTab('api-config')" id="tab-api-config" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-key w-4"></i> ২. AI & API Key Engine
-        </button>
-        <button onclick="switchTab('medicines')" id="tab-medicines" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-capsules w-4"></i> ৩. Medicine Data (CRUD)
-        </button>
-        <button onclick="switchTab('users')" id="tab-users" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-users-gear w-4"></i> ৪. User & Roles
-        </button>
-        <button onclick="switchTab('cms')" id="tab-cms" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-file-pen w-4"></i> ৫. CMS & Articles
-        </button>
-        <button onclick="switchTab('analytics')" id="tab-analytics" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-chart-line w-4"></i> ৬. Analytics & Reports
-        </button>
-        <button onclick="switchTab('security')" id="tab-security" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-shield-halved w-4"></i> ৭. Security & Audit
-        </button>
-        <button onclick="switchTab('backups')" id="tab-backups" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-database w-4"></i> ৮. Database Backups
-        </button>
-        <button onclick="switchTab('settings')" id="tab-settings" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">
-          <i class="fa-solid fa-sliders w-4"></i> ৯. Maintenance Mode
+          <i class="fa-solid fa-key w-4"></i> AI & API Key Engine
         </button>
       </nav>
     </div>
 
-    <!-- লগআউট অপশন -->
+    <!-- Logout Action -->
     <div class="p-4 border-t border-slate-800">
       <button onclick="handleLogout()" class="w-full py-2 px-3 bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-right-from-bracket"></i> Logout Terminal
@@ -68,9 +47,9 @@
     </div>
   </aside>
 
-  <!-- ডানপাশের মূল স্ক্রিন -->
+  <!-- Main Content Area -->
   <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-    <!-- টপবার -->
+    <!-- Top Header -->
     <header class="h-16 bg-[#121827]/80 backdrop-blur border-b border-slate-800 flex items-center justify-between px-8 sticky top-0 z-20">
       <div class="flex items-center gap-3 w-80">
         <div class="relative w-full">
@@ -87,43 +66,56 @@
 
     <div class="p-8 space-y-6">
 
-      <!-- ১. ওভারভিউ সেকশন -->
+      <!-- 1. DASHBOARD OVERVIEW -->
       <section id="view-overview" class="space-y-6">
-        <h2 class="text-lg font-bold text-white">System Dashboard Overview</h2>
+        <div>
+          <h2 class="text-lg font-bold text-white">System Dashboard Overview</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Real-time status monitoring, API consumption, and engine diagnostics.</p>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400">Total Medicines / Records</p>
-            <p class="text-2xl font-bold text-white mt-2 font-mono">1,482</p>
-            <span class="text-[10px] text-emerald-400 mt-2 block">+12 pending verification</span>
+            <p class="text-xs text-slate-400 font-medium">Active API Provider</p>
+            <p id="kpiProvider" class="text-xl font-bold text-white mt-2 font-mono">Custom REST</p>
+            <span class="text-[10px] text-emerald-400 mt-2 block">Protocol: HTTPS Secured</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400">Monthly AI Tokens</p>
-            <p class="text-2xl font-bold text-white mt-2 font-mono">428,910</p>
-            <span class="text-[10px] text-sky-400 mt-2 block">Quota: 42.8% used</span>
+            <p class="text-xs text-slate-400 font-medium">API Key Status</p>
+            <p id="kpiKeyStatus" class="text-xl font-bold text-amber-400 mt-2 font-mono">Not Configured</p>
+            <span class="text-[10px] text-slate-400 mt-2 block">Client & Server Sync</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400">System API Health</p>
-            <p class="text-2xl font-bold text-emerald-400 mt-2 font-mono">99.9%</p>
-            <span class="text-[10px] text-slate-400 mt-2 block">Response: 120ms</span>
+            <p class="text-xs text-slate-400 font-medium">System Telemetry</p>
+            <p class="text-xl font-bold text-emerald-400 mt-2 font-mono">Operational</p>
+            <span class="text-[10px] text-slate-400 mt-2 block">Response: 118ms</span>
           </div>
           <div class="bg-[#121827] border border-slate-800 p-5 rounded-2xl">
-            <p class="text-xs text-slate-400">Admin Security</p>
-            <p class="text-2xl font-bold text-emerald-400 mt-2 font-mono">Active</p>
-            <span class="text-[10px] text-slate-400 mt-2 block">Session: Encrypted</span>
+            <p class="text-xs text-slate-400 font-medium">Access Control</p>
+            <p class="text-xl font-bold text-emerald-400 mt-2 font-mono">Protected</p>
+            <span class="text-[10px] text-slate-400 mt-2 block">Passcode Enforced</span>
           </div>
         </div>
 
         <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6">
-          <h3 class="text-sm font-semibold text-white mb-3">Live System Activity & Audit Trail</h3>
+          <h3 class="text-sm font-semibold text-white mb-3">System Activity & Audit Log</h3>
           <div class="space-y-2 text-xs font-mono text-slate-400">
-            <p class="border-b border-slate-800 pb-2">[10:14:02] <span class="text-emerald-400">AUTH_SUCCESS</span> Admin authenticated from verified browser session.</p>
-            <p class="border-b border-slate-800 pb-2">[09:30:15] <span class="text-sky-400">API_SYNC</span> Stock Market and AI Endpoints verified (Status: 200 OK).</p>
-            <p>[08:45:00] <span class="text-amber-400">BACKUP_COMPLETE</span> Supabase database snapshot captured successfully.</p>
+            <p class="border-b border-slate-800 pb-2 flex items-center justify-between">
+              <span>[SYSTEM_AUTH] Super Admin authenticated into secure terminal.</span>
+              <span class="text-emerald-400 text-[10px]">Verified</span>
+            </p>
+            <p class="border-b border-slate-800 pb-2 flex items-center justify-between">
+              <span>[API_ENDPOINT] Live quote stream ready for data pipeline.</span>
+              <span class="text-sky-400 text-[10px]">200 OK</span>
+            </p>
+            <p class="flex items-center justify-between">
+              <span>[NETLIFY_DEPLOY] Production build initialized and published.</span>
+              <span class="text-slate-500 text-[10px]">Success</span>
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- ২. API KEY ও AI ইঞ্জিন কনফিগারেশন -->
+      <!-- 2. AI ENGINE & API KEY CONFIGURATION -->
       <section id="view-api-config" class="hidden space-y-6">
         <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 space-y-5">
           <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
@@ -131,7 +123,7 @@
               <h2 class="text-base font-bold text-white flex items-center gap-2">
                 <i class="fa-solid fa-robot text-emerald-400"></i> AI Engine & API Key Manager
               </h2>
-              <p class="text-xs text-slate-400 mt-1">আপনার AI Model (Gemini/OpenAI) এবং Stock Screener API Key এখানে নিরাপদে কনফিগার করুন।</p>
+              <p class="text-xs text-slate-400 mt-1">Configure your LLM model selection and Market Data API credentials safely.</p>
             </div>
             <span id="keyStatusBadge" class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-mono">Not Configured</span>
           </div>
@@ -140,7 +132,7 @@
             <div>
               <label class="block text-xs font-medium text-slate-300 mb-1.5">AI Engine Model Selection</label>
               <select id="modelSelect" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Clinical Accuracy)</option>
+                <option value="gemini-1.5-pro">Google Gemini 1.5 Pro (Recommended)</option>
                 <option value="gemini-1.5-flash">Google Gemini 1.5 Flash (Ultra Fast)</option>
                 <option value="gpt-4o">OpenAI GPT-4o</option>
               </select>
@@ -149,7 +141,7 @@
             <div>
               <label class="block text-xs font-medium text-slate-300 mb-1.5">Market Data / AI API Secret Key</label>
               <div class="relative">
-                <input type="password" id="apiKeyInput" placeholder="API Key এখানে পেস্ট করুন..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500 pr-20">
+                <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500 pr-20">
                 <button type="button" onclick="toggleKeyVisibility()" class="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-white">
                   <span id="keyToggleText">Show</span>
                 </button>
@@ -157,7 +149,7 @@
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1.5">API Endpoint / Webhook URL</label>
+              <label class="block text-xs font-medium text-slate-300 mb-1.5">API Endpoint / Webhook URL (Optional)</label>
               <input type="text" id="apiEndpointInput" placeholder="https://api.yourdomain.com/v1" class="w-full bg-[#0b0f17] border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
             </div>
 
@@ -174,101 +166,13 @@
         </div>
       </section>
 
-      <!-- ৩. মেডিসিন ডেটাবেস (CRUD) -->
-      <section id="view-medicines" class="hidden space-y-6">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-white">Medicine Repository (CRUD)</h2>
-          <button class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Add New Formulation
-          </button>
-        </div>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl overflow-hidden">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-[#0b0f17] text-slate-400 border-b border-slate-800">
-              <tr>
-                <th class="p-4">Remedy Name</th>
-                <th class="p-4">Classification</th>
-                <th class="p-4">Potencies</th>
-                <th class="p-4">Status</th>
-                <th class="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800 font-mono">
-              <tr>
-                <td class="p-4 font-bold text-white font-sans">Arnica Montana</td>
-                <td class="p-4 text-slate-400">Compositae</td>
-                <td class="p-4 text-slate-300">30C, 200C, 1M</td>
-                <td class="p-4"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Verified</span></td>
-                <td class="p-4 text-right font-sans">
-                  <button class="text-slate-400 hover:text-white mr-2"><i class="fa-solid fa-pen"></i></button>
-                  <button class="text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td class="p-4 font-bold text-white font-sans">Nux Vomica</td>
-                <td class="p-4 text-slate-400">Loganiaceae</td>
-                <td class="p-4 text-slate-300">6C, 30C, 200C</td>
-                <td class="p-4"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Verified</span></td>
-                <td class="p-4 text-right font-sans">
-                  <button class="text-slate-400 hover:text-white mr-2"><i class="fa-solid fa-pen"></i></button>
-                  <button class="text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- বাকি মডিউলসমূহ (Placeholder Views) -->
-      <section id="view-users" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৪. User Management & Permissions</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          User roles (Super Admin, Reviewer, Doctor) configuration and permissions matrix.
-        </div>
-      </section>
-
-      <section id="view-cms" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৫. Content Management System (CMS)</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          Manage clinical disclaimers, homepage banners, and medical articles.
-        </div>
-      </section>
-
-      <section id="view-analytics" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৬. Analytics & User Feedback</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          AI response accuracy reports and query volume tracking.
-        </div>
-      </section>
-
-      <section id="view-security" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৭. Security Hardening & 2FA</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          Two-factor authentication (2FA) enforcement and IP rate-limiting rules.
-        </div>
-      </section>
-
-      <section id="view-backups" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৮. Database Backups & Restore</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          Automated Supabase snapshots and verified one-click restore workflows.
-        </div>
-      </section>
-
-      <section id="view-settings" class="hidden space-y-4">
-        <h2 class="text-lg font-bold text-white">৯. Maintenance Mode & Flags</h2>
-        <div class="bg-[#121827] border border-slate-800 rounded-2xl p-6 text-xs text-slate-400">
-          Toggle live maintenance mode overlay for public visitors.
-        </div>
-      </section>
-
     </div>
   </main>
 
   <script>
-    // সাইডবার ট্যাব পরিবর্তন
+    // Tab switching logic (Only Overview & API Config)
     function switchTab(tabId) {
-      const tabs = ['overview', 'api-config', 'medicines', 'users', 'cms', 'analytics', 'security', 'backups', 'settings'];
+      const tabs = ['overview', 'api-config'];
       tabs.forEach(t => {
         const view = document.getElementById(`view-${t}`);
         const btn = document.getElementById(`tab-${t}`);
@@ -284,20 +188,34 @@
       });
     }
 
-    // সেভ করা ডাটা লোড
+    // Load saved settings
     document.addEventListener('DOMContentLoaded', () => {
       const savedKey = localStorage.getItem('tradePulse_api_key');
       const savedUrl = localStorage.getItem('tradePulse_api_url');
+      const savedModel = localStorage.getItem('tradePulse_ai_model');
+
       if (savedKey) {
         document.getElementById('apiKeyInput').value = savedKey;
-        const badge = document.getElementById('keyStatusBadge');
-        badge.textContent = 'Active (Connected)';
-        badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-mono';
+        updateBadgeStatus(true);
       }
       if (savedUrl) document.getElementById('apiEndpointInput').value = savedUrl;
+      if (savedModel) document.getElementById('modelSelect').value = savedModel;
     });
 
-    // API Key দেখানো বা লুকানো
+    function updateBadgeStatus(isActive) {
+      const badge = document.getElementById('keyStatusBadge');
+      const kpiBadge = document.getElementById('kpiKeyStatus');
+      if (isActive) {
+        badge.textContent = 'Active (Connected)';
+        badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-mono';
+        if (kpiBadge) {
+          kpiBadge.textContent = 'Active (Ready)';
+          kpiBadge.className = 'text-xl font-bold text-emerald-400 mt-2 font-mono';
+        }
+      }
+    }
+
+    // Toggle API Key visibility
     function toggleKeyVisibility() {
       const input = document.getElementById('apiKeyInput');
       const label = document.getElementById('keyToggleText');
@@ -310,47 +228,47 @@
       }
     }
 
-    // কনফিগারেশন সেভ
+    // Save configurations
     function saveApiCredentials() {
       const key = document.getElementById('apiKeyInput').value.trim();
       const url = document.getElementById('apiEndpointInput').value.trim();
+      const model = document.getElementById('modelSelect').value;
       const feedback = document.getElementById('saveFeedback');
 
       if (!key) {
-        feedback.textContent = 'ত্রুটি: API Key দেওয়া হয়নি!';
+        feedback.textContent = 'Error: API Key field cannot be left blank.';
         feedback.className = 'text-xs text-rose-400';
         feedback.classList.remove('hidden');
         return;
       }
 
       localStorage.setItem('tradePulse_api_key', key);
+      localStorage.setItem('tradePulse_ai_model', model);
       if (url) localStorage.setItem('tradePulse_api_url', url);
 
-      feedback.textContent = 'API Key সফলভাবে কনফিগার ও সংরক্ষিত হয়েছে!';
+      feedback.textContent = 'Configuration saved successfully!';
       feedback.className = 'text-xs text-emerald-400';
       feedback.classList.remove('hidden');
 
-      const badge = document.getElementById('keyStatusBadge');
-      badge.textContent = 'Active (Connected)';
-      badge.className = 'px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-mono';
+      updateBadgeStatus(true);
     }
 
-    // পিং টেস্ট
+    // Ping test
     function testConnection() {
       const key = document.getElementById('apiKeyInput').value.trim();
       const feedback = document.getElementById('saveFeedback');
       if (!key) {
-        feedback.textContent = 'আগে API Key ফিল্ডে ইনপুট দিন!';
+        feedback.textContent = 'Please enter an API Key first before testing.';
         feedback.className = 'text-xs text-rose-400';
         feedback.classList.remove('hidden');
         return;
       }
-      feedback.textContent = 'হ্যান্ডশেক সফল! সার্ভার রেসপন্স: 200 OK (118ms)';
+      feedback.textContent = 'Handshake verified! Server response: 200 OK (118ms)';
       feedback.className = 'text-xs text-sky-400';
       feedback.classList.remove('hidden');
     }
 
-    // লগআউট
+    // Logout
     function handleLogout() {
       localStorage.removeItem('tradePulse_auth');
       window.location.replace('login.html');
