@@ -99,53 +99,6 @@
   <!-- Dynamic Views Container rendered by JS -->
   <main class="max-w-[1550px] mx-auto px-4 py-6" id="appMainContent"></main>
 
-  <!-- Admin Panel Modal -->
-  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-[#121827] border border-slate-700 rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-gear text-emerald-400"></i> System & Admin Configuration
-        </h3>
-        <button onclick="App.closeAdminModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-
-      <div id="adminAuthBox" class="space-y-3">
-        <p class="text-xs text-slate-400">Enter Admin Passcode (Default: <code class="text-emerald-400 font-mono">admin123</code>):</p>
-        <div class="flex gap-2">
-          <input type="password" id="adminPassInput" placeholder="Passcode" class="flex-1 bg-[#0b0f17] border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
-          <button onclick="App.unlockAdmin()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold">Unlock</button>
-        </div>
-      </div>
-
-      <div id="adminFields" class="space-y-4 hidden text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1">Platform Brand Title</label>
-          <input type="text" id="adminBrandName" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white" />
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Platform Tagline</label>
-          <input type="text" id="adminBrandTag" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white" />
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Alert WhatsApp Phone Number</label>
-          <input type="text" id="adminClientWhatsapp" value="+917908369836" class="w-full bg-[#0b0f17] border border-slate-700 rounded-lg px-3 py-2 text-white font-mono" />
-        </div>
-        <div class="flex items-center gap-4 pt-1">
-          <label class="flex items-center gap-2 cursor-pointer text-slate-300">
-            <input type="checkbox" id="adminWhatsappToggle" class="w-4 h-4 accent-emerald-500 rounded" />
-            <span>Enable Automated WhatsApp Alerts</span>
-          </label>
-        </div>
-
-        <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
-          <button onclick="App.closeAdminModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg">Cancel</button>
-          <button onclick="App.saveAdminSettings()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold">Save Settings</button>
-        </div>
-        <p id="adminStatusMsg" class="text-xs text-emerald-400 text-right hidden"></p>
-      </div>
-    </div>
-  </div>
-
   <script>
     const App = (() => {
       const SUPABASE_URL = "https://oqsjdnevuvksnypizyfw.supabase.co";
