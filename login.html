@@ -59,10 +59,12 @@
       const pass = document.getElementById('password').value;
       const errorDiv = document.getElementById('errorMsg');
 
-      // ড্যাশবোর্ডের অ্যাডমিন পাসকোডের সাথে মিল রাখা হয়েছে
-      if (pass === 'shrijitneel1909') {
-        localStorage.setItem('tradePulse_auth', 'true');
-        window.location.href = 'index.html'; // ভেরিফাই হলে মূল পেজে নিয়ে যাবে
+     // ব্রাউজারের স্টোরেজ থেকে অ্যাডমিনের নতুন পাসকোড নেবে, না থাকলে ডিফল্ট হিসেবে 'shrijitneel1909' কাজ করবে
+    const correctPass = localStorage.getItem('tradePulse_master_pass') || 'shrijitneel1909';
+
+    if (pass === correctPass) {
+      localStorage.setItem('tradePulse_auth', 'true');
+      window.location.replace('index.html'); // .replace ব্যবহার করলে ব্যাক বাটনে লুপ হবে না
       } else {
         errorDiv.innerText = 'Incorrect passcode! Please enter the correct passcode.';
         errorDiv.classList.remove('hidden');
